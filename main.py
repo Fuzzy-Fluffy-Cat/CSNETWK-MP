@@ -1,2 +1,2 @@
 x = input("Enter Username: ")
-print(f"Username: {x}")
+print(f"{x} has entered the chat")
