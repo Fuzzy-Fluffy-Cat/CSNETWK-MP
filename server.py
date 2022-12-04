@@ -1,5 +1,6 @@
 import socket 
 import threading
+import json
 
 HEADER = 64
 PORT = 5050
@@ -35,10 +36,14 @@ def help():
     return "\nThis is a list of commands\n/join - Join the chatroom\n/leave - Leave from the chatroom\n/register [alias] - Register to the chatroom\n/all [message] - Message all users\n/msg [alias] [message] - Message user with certain alias\n/? - Shows list of commands"
 
 def no_user_input():
-    return "This is the list of commands: /join, /leave, /register /all and /msg"
+    return "Type /? for a list of commands..."
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
+
+def json_translator(message):
+    data = json.loads(message)
+    return data
 
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
@@ -50,7 +55,11 @@ def handle_client(conn, addr):
         if msg_length:
             msg_length = int(msg_length)
             msg = conn.recv(msg_length).decode(FORMAT)
-
+            
+            print("msg from client: ")
+            print(msg)
+            print(json_translator(msg))
+            
             #COMMANDS
             to_client = ""
             if msg.startswith(LEAVE_COMMAND):
@@ -60,12 +69,12 @@ def handle_client(conn, addr):
             elif msg.startswith(REGISTER_COMMAND):
                 pass
             elif msg.startswith(ALL_COMMAND):
-                msg_to_client = msg.split(" ", 1)
+                msg_to_client = msg.split(" ", 1) #This splits /all and the encode
                 to_client = all(addr, msg_to_client[1])
             elif msg.startswith(HELP_COMMAND):
                 to_client = help()
             else:
-                to_client = no_user_input
+                to_client = no_user_input()
 
             conn.send(to_client.encode(FORMAT))
 
