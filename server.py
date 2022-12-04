@@ -13,7 +13,7 @@ LEAVE_COMMAND = "/leave"
 REGISTER_COMMAND = "/register"
 ALL_COMMAND = "/all"
 MSG_COMMAND = "/msg"
-HELP_COMMAND = "/help"
+HELP_COMMAND = "/?"
 
 #COMMAND FUNCTIONS
 def join():
@@ -32,6 +32,9 @@ def msg():
     pass
 
 def help():
+    return "\nThis is a list of commands\n/join - Join the chatroom\n/leave - Leave from the chatroom\n/register [alias] - Register to the chatroom\n/all [message] - Message all users\n/msg [alias] [message] - Message user with certain alias\n/? - Shows list of commands"
+
+def no_user_input():
     return "This is the list of commands: /join, /leave, /register /all and /msg"
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -59,8 +62,10 @@ def handle_client(conn, addr):
             elif msg.startswith(ALL_COMMAND):
                 msg_to_client = msg.split(" ", 1)
                 to_client = all(addr, msg_to_client[1])
-            else:
+            elif msg.startswith(HELP_COMMAND):
                 to_client = help()
+            else:
+                to_client = no_user_input
 
             conn.send(to_client.encode(FORMAT))
 

@@ -12,7 +12,7 @@ LEAVE_COMMAND = "/leave"
 REGISTER_COMMAND = "/register"
 ALL_COMMAND = "/all"
 MSG_COMMAND = "/msg"
-HELP_COMMAND = "/help"
+HELP_COMMAND = "/?"
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDR)
