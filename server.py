@@ -3,8 +3,8 @@ import threading
 import json
 
 HEADER = 64
-PORT = 5050
-SERVER = socket.gethostbyname(socket.gethostname())
+PORT = 55555
+SERVER = '0.0.0.0'
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 
@@ -38,7 +38,7 @@ def help():
 def no_user_input():
     return "Type /? for a list of commands..."
 
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server.bind(ADDR)
 
 def json_translator(message):
@@ -82,7 +82,7 @@ def handle_client(conn, addr):
         
 
 def start():
-    server.listen()
+    #server.listen()
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
         conn, addr = server.accept()
