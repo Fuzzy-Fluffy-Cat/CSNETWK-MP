@@ -32,9 +32,6 @@ def receive():
 #COMMAND FUNCTIONS
 def join(server, client, message):
     server.sendto(f"{message['owner']} joined!".encode(), client)
-
-def leave():
-    pass
     
 def all(server, client, message):
     server.sendto(f"{message['owner']}: {message['message']}".encode(), client)
@@ -60,7 +57,7 @@ def broadcast():
                     elif message['command'] == MSG_COMMAND:
                         pass
                     else:
-                        server.sendto(message, client)
+                        pass
                 except:
                     clients.remove(client)
 

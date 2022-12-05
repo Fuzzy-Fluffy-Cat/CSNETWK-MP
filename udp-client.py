@@ -59,14 +59,9 @@ def command_to_json(command, argument, name):
     else:
         return b'{ "command": "" }'
 
-def help():
-    print("\nThis is a list of commands\n/join - Join the chatroom\n/leave - Leave from the chatroom\n/register [alias] - Register to the chatroom\n/all [message] - Message all users\n/msg [alias] [message] - Message user with certain alias\n/? - Shows list of commands")
-
 name = ""
+print("Type /register [alias] to start")
 while True:
-    if(name == ""):
-        print("Type /register [alias] to start")
-    
     message = input("")
 
     input_tokens = message.split(" ", 1)
@@ -82,7 +77,11 @@ while True:
         name = argument
         print("Welcome " + name) 
     elif message.startswith(HELP_COMMAND):
-        help()
-    else:
+        print("\nThis is a list of commands\n/join - Join the chatroom\n/leave - Leave from the chatroom\n/register [alias] - Register to the chatroom\n/all [message] - Message all users\n/msg [alias] [message] - Message user with certain alias\n/? - Shows list of commands")
+    elif not message.startswith(JOIN_COMMAND) and not message.startswith(ALL_COMMAND) and not message.startswith(MSG_COMMAND):
+        print("Type /? for a list of commands...")
+    elif not name == "":
         json_message = command_to_json(command, argument, name)
-        client.sendto(json_message, ADDR)    
+        client.sendto(json_message, ADDR)
+    else:
+        print("Type /register [alias] to start")
