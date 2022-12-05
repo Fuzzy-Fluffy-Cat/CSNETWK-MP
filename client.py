@@ -18,36 +18,39 @@ HELP_COMMAND = "/?"
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDR)
 
-def command_to_json(msg):
-    if msg.startswith(LEAVE_COMMAND):
+def command_to_json(command, argument):
+    if command.startswith(LEAVE_COMMAND):
         return b'{ "command" : "/leave" }'
         
-    elif msg.startswith(JOIN_COMMAND): 
+    elif command.startswith(JOIN_COMMAND): 
         return b'{ "command" : "/join" }'
 
-    elif msg.startswith(REGISTER_COMMAND):
-        alias = msg.split(" ", 1)[1]
+    elif command.startswith(REGISTER_COMMAND):
+        alias = argument   #command.split(" ", 1)[1]
         str = '{ "command":"/register", "alias": "'+ alias +'"}'
         return bytes(str, 'utf-8')
 
-    elif msg.startswith(ALL_COMMAND):
-        msg_to_client = msg.split(" ", 1) #This splits /all and the message
+    elif command.startswith(ALL_COMMAND):
+        msg_to_client = argument   #command.split(" ", 1) #This splits /all and the message
         message = '{ "command": "/all", "message": "' + msg_to_client[1] + '" }'
         return bytes(message, 'utf-8')
 
-    elif msg.startswith(HELP_COMMAND):
+    elif command.startswith(HELP_COMMAND):
         return b'{ "command" : "/?" }'
 
     else:
         return b'{ "command" : "" }'
 
-def send(msg):
+def send(input):
     #message = msg.encode(FORMAT)
     #send_length += b' ' * (HEADER - len(send_length))
     
-    print(msg)
-
-    json_message = command_to_json(msg)
+    print(input)
+    input_tokens = input.split(" ", 1)
+    command = input_tokens[0]
+    argument = input_tokens[1]
+  
+    json_message = command_to_json(command, argument)
 
     msg_length = len(json_message)
     send_length = str(msg_length).encode(FORMAT)
@@ -59,7 +62,7 @@ def send(msg):
 
     print(client.recv(2048).decode(FORMAT))
 
-msg = ""
-while(msg != LEAVE_COMMAND):
-    msg = input()
-    send(msg)
+input = ""
+while(input != LEAVE_COMMAND):
+    input = input("$ ")
+    send(input)
