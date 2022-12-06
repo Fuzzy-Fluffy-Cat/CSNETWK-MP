@@ -106,9 +106,9 @@ def broadcast():
                         msg_to_send = f"[Error] The receiver \"{message['receiver']}\" does not exist.".encode()
                         msg(msg_to_send, addr)
                 elif message['command'] == REGISTER_COMMAND:
-                    register(server, addr, message)
+                    register(addr, message)
                 elif message['command'] == LEAVE_COMMAND:
-                    leave(server, addr, message)
+                    leave(addr, message)
                 else:
                     pass
             except:

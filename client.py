@@ -1,9 +1,11 @@
 import socket
 import threading
 import random
+from datetime import datetime
+import pytz
 
 PORT = 55555
-SERVER = '192.168.254.108'
+SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -32,7 +34,8 @@ t.start()
 #Sends stuff to server. We code here.
 def command_to_json(command, argument, name):
     if command.startswith(LEAVE_COMMAND):
-        return b'{ "command": "/leave" }'
+        str = '{ "command": "/leave" , "owner": "'+ name +'"}'
+        return bytes(str, 'utf-8')
         
     elif command.startswith(JOIN_COMMAND): 
         str = '{ "command": "/join", "owner": "'+ name +'" }'
@@ -40,7 +43,7 @@ def command_to_json(command, argument, name):
 
     elif command.startswith(REGISTER_COMMAND):
         alias = argument
-        str = '{ "command": "/register", "alias": "'+ alias +'" }'
+        str = '{ "command": "/register", "owner": "'+ name +'", "alias": "'+ alias +'" }'
         return bytes(str, 'utf-8')
 
     elif command.startswith(ALL_COMMAND):
@@ -50,7 +53,7 @@ def command_to_json(command, argument, name):
 
     elif command.startswith(MSG_COMMAND):
         argument = argument.split(" ", 1)
-        message = '{ "command": "/msg", "owner": "'+ name +'", "message": "' + argument[1] + '", "client: "' +  argument[0] + '" }'
+        message = '{ "command": "/msg", "owner": "'+ name +'", "message": "' + argument[1] + '", "receiver": "' +  argument[0] + '" }'
         return bytes(message, 'utf-8')
 
     elif command.startswith(HELP_COMMAND):
@@ -59,10 +62,12 @@ def command_to_json(command, argument, name):
     else:
         return b'{ "command": "" }'
 
-name = ""
-print("Type /register [alias] to start")
+#Temporary username/alias
+name = "user_" + datetime.now(pytz.timezone('Singapore')).strftime("%d%m%Y%H%M%S")
+print(f"\"{name}\" has been set as your temporary name. Use the /register command to register a new name.")
+
 while True:
-    message = input("")
+    message = input(f"{name}: ")
 
     input_tokens = message.split(" ", 1)
     command = input_tokens[0]
@@ -71,17 +76,14 @@ while True:
     if len(input_tokens) > 1:
         argument = input_tokens[1]
     
-    if message.startswith(LEAVE_COMMAND):
-        exit()
-    elif message.startswith(REGISTER_COMMAND) and argument != "":
-        name = argument
-        print("Welcome " + name) 
-    elif message.startswith(HELP_COMMAND):
+    if message.startswith(HELP_COMMAND):
         print("\nThis is a list of commands\n/join - Join the chatroom\n/leave - Leave from the chatroom\n/register [alias] - Register to the chatroom\n/all [message] - Message all users\n/msg [alias] [message] - Message user with certain alias\n/? - Shows list of commands")
-    elif not message.startswith(JOIN_COMMAND) and not message.startswith(ALL_COMMAND) and not message.startswith(MSG_COMMAND):
-        print("Type /? for a list of commands...")
-    elif not name == "":
-        json_message = command_to_json(command, argument, name)
+
+    elif message.startswith(JOIN_COMMAND) or message.startswith(ALL_COMMAND) or message.startswith(MSG_COMMAND) or message.startswith(REGISTER_COMMAND) or message.startswith(LEAVE_COMMAND):
+        json_message = command_to_json(command, argument, name) 
+        print(json_message)
         client.sendto(json_message, ADDR)
+    
     else:
-        print("Type /register [alias] to start")
+        #Error message for unrecognized command
+        print(f"{command} is not a recognized as a command by the program.\nPlease type \"/?\" for a list of commands.")  

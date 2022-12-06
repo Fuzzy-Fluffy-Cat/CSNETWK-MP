@@ -74,10 +74,10 @@ while True:
     
     if message.startswith(HELP_COMMAND):
         print("\nThis is a list of commands\n/join - Join the chatroom\n/leave - Leave from the chatroom\n/register [alias] - Register to the chatroom\n/all [message] - Message all users\n/msg [alias] [message] - Message user with certain alias\n/? - Shows list of commands")
-    # elif not message.startswith(JOIN_COMMAND) and not message.startswith(ALL_COMMAND) and not message.startswith(MSG_COMMAND):
-    #     print("Type /? for a list of commands...")
+
     elif message.startswith(JOIN_COMMAND) or message.startswith(ALL_COMMAND) or message.startswith(MSG_COMMAND) or message.startswith(REGISTER_COMMAND) or message.startswith(LEAVE_COMMAND):
         json_message = command_to_json(command, argument, name) 
         client.sendto(json_message, ADDR)
+    
     else:
         print(f"{command} is not a recognized as a command by the program.\nPlease type \"/?\" for a list of commands.")  #Error message for unrecognized command
