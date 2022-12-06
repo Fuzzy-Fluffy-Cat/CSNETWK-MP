@@ -31,9 +31,10 @@ def receive():
 
 #COMMAND FUNCTIONS
 def join(addr, message):
+    global clients
     #Address already exists in the server
     if addr in clients:
-      msg_to_send = f"[Error] You are already connected to the server!".encode()
+      msg_to_send = "[Error] You are already connected to the server!".encode()
       msg(msg_to_send, addr)
     #Alias already exists in the server
     elif message['owner'] in [*clients.values()]:
@@ -44,18 +45,21 @@ def join(addr, message):
       clients[addr] = message['owner']
       msg_to_send = f"---{message['owner']} has joined the server---".encode()
       all(message, msg_to_send)
-      # server.sendto(f"[To everyone] {message['owner']} joined!".encode())
     
 def all(message, msg_to_send):
-    # server.sendto(f"{message['owner']}: {message['message']}".encode(), client)
+    global clients
+  
     for client_addr, client_name in clients:
       if client_name != message['owner']: 
         msg(msg_to_send, client_addr)
 
 def msg(msg_to_send, receiver):
+      global server
       server.sendto(msg_to_send, receiver)
 
 def register(addr, message):
+    global clients
+    
     #Success Register
     if message['alias'] not in [*clients.values()]:
       old_name = message['owner']
@@ -71,18 +75,22 @@ def register(addr, message):
       
 
 def leave(addr, message):
+    global clients
+    
     #Not connected to the server
     if addr not in clients:
-        msg_to_send = f"[Error] You are not connected to a server".encode()
+        msg_to_send = "[Error] You are not connected to a server".encode()
         msg(msg_to_send, addr)
     else:
         msg_to_all = f"---{message['owner']} has disconnected from the server---".encode()
-        msg_to_self = f"---You have disconnected from the server---".encode()
+        msg_to_self = "---You have disconnected from the server---".encode()
         all(message, msg_to_all)
         msg(msg_to_self, addr)
 
 
 def broadcast():
+    global clients
+  
     msg_to_send = ""
     while True:
         while not messages.empty():
@@ -117,7 +125,6 @@ def broadcast():
                     pass
             except:
                 del clients[addr]
-                # clients.del(addr)
 
 def start():
     print("[STARTING] server is starting...")
