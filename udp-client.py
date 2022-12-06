@@ -1,7 +1,7 @@
 import socket
 import threading
 import random
-import datetime
+from datetime import datetime
 import pytz
 
 PORT = 55555

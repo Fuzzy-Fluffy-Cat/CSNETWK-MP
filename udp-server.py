@@ -33,7 +33,7 @@ def receive():
 #COMMAND FUNCTIONS
 def join(addr, message):
     #Address already exists in the server
-    if addr in clients 
+    if addr in clients:
       msg_to_send = f"[Error] You are already connected to the server!".encode()
       msg(msg_to_send, addr)
     #Alias already exists in the server
@@ -42,7 +42,7 @@ def join(addr, message):
       msg(msg_to_send, addr)
     
     else: #Successfully Connected
-      clients(addr) = message['owner']
+      clients[addr] = message['owner']
       msg_to_send = f"---{message['owner']} has joined the server---".encode()
       all(message, msg_to_send)
       # server.sendto(f"[To everyone] {message['owner']} joined!".encode())
@@ -113,7 +113,8 @@ def broadcast():
                 else:
                     pass
             except:
-                clients.del(addr)
+                del clients[addr]
+                # clients.del(addr)
 
 def start():
     print("[STARTING] server is starting...")
