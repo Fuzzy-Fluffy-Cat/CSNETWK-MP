@@ -5,7 +5,8 @@ import datetime
 import pytz
 
 PORT = 55555
-SERVER = '192.168.254.108'
+SERVER = '192.168.1.117'
+# SERVER = '192.168.254.108'
 ADDR = (SERVER, PORT)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

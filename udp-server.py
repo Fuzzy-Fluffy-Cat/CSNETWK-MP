@@ -4,7 +4,8 @@ import queue
 import json
 
 PORT = 55555
-SERVER = '192.168.254.108'
+SERVER = '192.168.1.117'
+# SERVER = '192.168.254.108'
 ADDR = (SERVER, PORT)
 
 #COMMAND LIST
@@ -29,7 +30,7 @@ def receive():
         except: 
             pass
 
-COMMAND FUNCTIONS
+#COMMAND FUNCTIONS
 def join(addr, message):
     #Address already exists in the server
     if addr in clients 
