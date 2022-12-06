@@ -5,8 +5,7 @@ from datetime import datetime
 import pytz
 
 PORT = 55555
-SERVER = '192.168.1.117'
-# SERVER = '192.168.254.108'
+SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -35,15 +34,16 @@ t.start()
 #Sends stuff to server. We code here.
 def command_to_json(command, argument, name):
     if command.startswith(LEAVE_COMMAND):
-        return b'{ "command": "/leave" , "owner": "'+ name +'"}'
+        str = '{ "command": "/leave" , "owner": "'+ name +'"}'
+        return bytes(str, 'utf-8')
         
     elif command.startswith(JOIN_COMMAND): 
         str = '{ "command": "/join", "owner": "'+ name +'" }'
         return bytes(str, 'utf-8')
 
     elif command.startswith(REGISTER_COMMAND):
-        alias = argument
-        str = '{ "command": "/register", "owner": '+ name +'", " "alias": "'+ alias +'" }'
+        alias = argument                                                                    
+        str = '{ "command": "/register", "owner": "'+ name +'", " "alias": "'+ alias +'" }'
         return bytes(str, 'utf-8')
 
     elif command.startswith(ALL_COMMAND):

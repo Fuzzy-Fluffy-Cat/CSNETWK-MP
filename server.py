@@ -1,12 +1,11 @@
 import socket 
 import threading
+import queue
 import json
 
-HEADER = 64
 PORT = 55555
-SERVER = '0.0.0.0'
+SERVER = '192.168.254.108'
 ADDR = (SERVER, PORT)
-FORMAT = 'utf-8'
 
 #COMMAND LIST
 JOIN_COMMAND = "/join"
@@ -16,80 +15,60 @@ ALL_COMMAND = "/all"
 MSG_COMMAND = "/msg"
 HELP_COMMAND = "/?"
 
+server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server.bind(ADDR)
+
+messages = queue.Queue()
+clients = []
+
+def receive():
+    while True:
+        try:
+            message, addr = server.recvfrom(1024)
+            messages.put((message, addr))
+        except: 
+            pass
+
 #COMMAND FUNCTIONS
-def join():
-    pass
-
-def leave():
-    pass
-
-def register():
-    pass
-
-def all(addr, msg):
-    return f"[{addr}] {msg}"
+def join(server, client, message):
+    server.sendto(f"{message['owner']} joined!".encode(), client)
+    
+def all(server, client, message):
+    server.sendto(f"{message['owner']}: {message['message']}".encode(), client)
 
 def msg():
     pass
 
-def help():
-    return "\nThis is a list of commands\n/join - Join the chatroom\n/leave - Leave from the chatroom\n/register [alias] - Register to the chatroom\n/all [message] - Message all users\n/msg [alias] [message] - Message user with certain alias\n/? - Shows list of commands"
-
-def no_user_input():
-    return "Type /? for a list of commands..."
-
-server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-server.bind(ADDR)
-
-def json_translator(message):
-    data = json.loads(message)
-    return data
-
-def handle_client(conn, addr):
-    print(f"[NEW CONNECTION] {addr} connected.")
- 
-    connected = True
-    while connected:
-        msg_length = conn.recv(HEADER).decode(FORMAT)
-        print(msg_length)
-        if msg_length:
-            msg_length = int(msg_length)
-            msg = conn.recv(msg_length).decode(FORMAT)
-            
-            print("msg from client: ")
-            print(msg)
-            print(json_translator(msg))
-            
-            #COMMANDS
-            to_client = ""
-            if msg.startswith(LEAVE_COMMAND):
-                connected = False
-            elif msg.startswith(JOIN_COMMAND): 
-                pass
-            elif msg.startswith(REGISTER_COMMAND):
-                pass
-            elif msg.startswith(ALL_COMMAND):
-                msg_to_client = msg.split(" ", 1) #This splits /all and the encode
-                to_client = all(addr, msg_to_client[1])
-            elif msg.startswith(HELP_COMMAND):
-                to_client = help()
-            else:
-                to_client = no_user_input()
-
-            conn.send(to_client.encode(FORMAT))
-
-    conn.close()
-        
+def broadcast():
+    while True:
+        while not messages.empty():
+            message, addr = messages.get()
+            message = json.loads(message.decode())
+            print(message)
+            print("Command Used: " + message['command'])
+            if addr not in clients:
+                clients.append(addr)
+            for client in clients:
+                try:
+                    if message['command'] == JOIN_COMMAND:
+                        join(server, client, message)
+                    elif message['command'] == ALL_COMMAND:
+                        all(server, client, message)
+                    elif message['command'] == MSG_COMMAND:
+                        pass
+                    else:
+                        pass
+                except:
+                    clients.remove(client)
 
 def start():
-    #server.listen()
+    print("[STARTING] server is starting...")
     print(f"[LISTENING] Server is listening on {SERVER}")
-    while True:
-        conn, addr = server.accept()
-        thread = threading.Thread(target=handle_client, args=(conn, addr))
-        thread.start()
-        print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
 
+    t1 = threading.Thread(target=receive)
+    t2 = threading.Thread(target=broadcast)
 
-print("[STARTING] server is starting...")
+    t1.start()
+    t2.start()
+
 start()

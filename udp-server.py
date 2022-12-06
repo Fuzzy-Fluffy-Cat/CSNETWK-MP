@@ -4,8 +4,7 @@ import queue
 import json
 
 PORT = 55555
-SERVER = '192.168.1.117'
-# SERVER = '192.168.254.108'
+SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
 
 #COMMAND LIST
