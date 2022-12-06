@@ -85,3 +85,5 @@ while True:
         client.sendto(json_message, ADDR)
     else:
         print("Type /register [alias] to start")
+
+#test
