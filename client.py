@@ -119,4 +119,4 @@ while True:
     
     else:
         #Error message for unrecognized command
-        print(f"{command} is not a recognized as a command by the program.\nPlease type \"/?\" for a list of commands.")  
+        print(f"{command} is not recognized as a command by the program.\nPlease type \"/?\" for a list of commands.")  
