@@ -92,7 +92,7 @@ def broadcast():
             print("Command Used: " + message['command'])
             try:
                 if message['command'] == JOIN_COMMAND:
-                    join(server, addr, message)
+                    join(addr, message)
                 elif message['command'] == ALL_COMMAND:
                     msg_to_send = f"[To everyone] {message['owner']}: {message['message']}".encode()
                     all(message, msg_to_send)
