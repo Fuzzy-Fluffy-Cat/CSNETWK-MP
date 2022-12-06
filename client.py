@@ -104,8 +104,9 @@ print('server '+SERVER)
 
 joined = False
 while joined == False:
-    i = input("")
+    # i = input("")
     j = "/join " + SERVER + " " + str(PORT)
+    i=j #
     joined = True if i == j else False
     print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.") if joined == False else print(f"\"{name}\" has been set as your temporary name. Use the /register command to register a new name.")
 
