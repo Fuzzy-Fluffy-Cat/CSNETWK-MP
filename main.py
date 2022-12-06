@@ -17,7 +17,16 @@
 # # print("hello" if "chaotic" in [*d.values()] else "tite")
 # print("hello" if "chaos" in d else "tite")
 
-l = {"aaa": 1, "bbb": 2, "ccc": 5, "ddd": 6}
-s = [key for key in l.items() if key == "ccc"][0]
+# l = {"aaa": 1, "bbb": 2, "ccc": 5, "ddd": 6}
+# s = [key for key in l.items() if key == "ccc"][0]
 
-print(l, s)
+# print(l, s)
+
+name = ["me", "Mitsuha", "Taki", "Tang ina mo", "Kimi no Yawa"]
+
+def foo():
+  global name
+  for i in name:
+    print(i)
+
+foo()
