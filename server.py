@@ -1,12 +1,11 @@
 import socket 
 import threading
+import queue
 import json
 
-HEADER = 64
 PORT = 55555
-SERVER = '0.0.0.0'
+SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
-FORMAT = 'utf-8'
 
 #COMMAND LIST
 JOIN_COMMAND = "/join"
@@ -16,80 +15,125 @@ ALL_COMMAND = "/all"
 MSG_COMMAND = "/msg"
 HELP_COMMAND = "/?"
 
-#COMMAND FUNCTIONS
-def join():
-    pass
-
-def leave():
-    pass
-
-def register():
-    pass
-
-def all(addr, msg):
-    return f"[{addr}] {msg}"
-
-def msg():
-    pass
-
-def help():
-    return "\nThis is a list of commands\n/join - Join the chatroom\n/leave - Leave from the chatroom\n/register [alias] - Register to the chatroom\n/all [message] - Message all users\n/msg [alias] [message] - Message user with certain alias\n/? - Shows list of commands"
-
-def no_user_input():
-    return "Type /? for a list of commands..."
-
 server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server.bind(ADDR)
 
-def json_translator(message):
-    data = json.loads(message)
-    return data
+messages = queue.Queue()
+clients = {}
 
-def handle_client(conn, addr):
-    print(f"[NEW CONNECTION] {addr} connected.")
- 
-    connected = True
-    while connected:
-        msg_length = conn.recv(HEADER).decode(FORMAT)
-        print(msg_length)
-        if msg_length:
-            msg_length = int(msg_length)
-            msg = conn.recv(msg_length).decode(FORMAT)
-            
-            print("msg from client: ")
-            print(msg)
-            print(json_translator(msg))
-            
-            #COMMANDS
-            to_client = ""
-            if msg.startswith(LEAVE_COMMAND):
-                connected = False
-            elif msg.startswith(JOIN_COMMAND): 
-                pass
-            elif msg.startswith(REGISTER_COMMAND):
-                pass
-            elif msg.startswith(ALL_COMMAND):
-                msg_to_client = msg.split(" ", 1) #This splits /all and the encode
-                to_client = all(addr, msg_to_client[1])
-            elif msg.startswith(HELP_COMMAND):
-                to_client = help()
-            else:
-                to_client = no_user_input()
+def receive():
+    while True:
+        try:
+            message, addr = server.recvfrom(1024)
+            messages.put((message, addr))
+        except: 
+            pass
 
-            conn.send(to_client.encode(FORMAT))
+#COMMAND FUNCTIONS
+def join(addr, message):
+    global clients
+    #Address already exists in the server
+    if addr in clients:
+      msg_to_send = "[Error] You are already connected to the server!".encode()
+      msg(msg_to_send, addr)
+    #Alias already exists in the server
+    elif message['owner'] in [*clients.values()]:
+      msg_to_send = f"[Error] The alias \"{message['owner']}\" already exists. Register a new one".encode()
+      msg(msg_to_send, addr)
+    
+    else: #Successfully Connected
+      clients[addr] = message['owner']
+      msg_to_send = f"---{message['owner']} has joined the server---".encode()
+      all(message, msg_to_send)
+    
+def all(message, msg_to_send):
+    global clients
+  
+    for client_addr, client_name in clients:
+      if client_name != message['owner']: 
+        msg(msg_to_send, client_addr)
 
-    conn.close()
-        
+def msg(msg_to_send, receiver):
+      global server
+      server.sendto(msg_to_send, receiver)
+
+def register(addr, message):
+    global clients
+    
+    #Success Register
+    if message['alias'] not in [*clients.values()]:
+      old_name = message['owner']
+      new_name = message['alias']
+      clients[addr] = new_name
+      msg_to_send = f"---\"{old_name}\" has renamed themselves as \"{new_name}\"---".encode()
+      all(message, msg_to_send)
+    
+    #Alias already exists
+    else:
+      msg_to_send = f"[Error] The alias \"{message['owner']}\" already exists. Register a new one".encode()
+      msg(msg_to_send, addr)
+      
+
+def leave(addr, message):
+    global clients
+    
+    #Not connected to the server
+    if addr not in clients:
+        msg_to_send = "[Error] You are not connected to a server".encode()
+        msg(msg_to_send, addr)
+    else:
+        msg_to_all = f"---{message['owner']} has disconnected from the server---".encode()
+        msg_to_self = "---You have disconnected from the server---".encode()
+        all(message, msg_to_all)
+        msg(msg_to_self, addr)
+
+
+def broadcast():
+    global clients
+  
+    msg_to_send = ""
+    while True:
+        while not messages.empty():
+            message, addr = messages.get()
+
+            print(message)
+            print(addr)
+
+            message = json.loads(message.decode())
+            print(message)
+            print("Command Used: " + message['command'])
+            try:
+                if message['command'] == JOIN_COMMAND:
+                    join(addr, message)
+                elif message['command'] == ALL_COMMAND:
+                    msg_to_send = f"[To everyone] {message['owner']}: {message['message']}".encode()
+                    all(message, msg_to_send)
+                elif message['command'] == MSG_COMMAND:
+                    if message['receiver'] in [*clients.values()]:
+                        msg_to_send = f"[To You] {message['owner']}: {message['message']}".encode()
+                        receiver = [a for a, u in clients.items() if u == message['receiver']]  #Gets the address corresponding to the alias
+                        
+                        msg(msg_to_send, receiver)
+                    else:
+                        msg_to_send = f"[Error] The receiver \"{message['receiver']}\" does not exist.".encode()
+                        msg(msg_to_send, addr)
+                elif message['command'] == REGISTER_COMMAND:
+                    register(addr, message)
+                elif message['command'] == LEAVE_COMMAND:
+                    leave(addr, message)
+                else:
+                    pass
+            except:
+                del clients[addr]
 
 def start():
-    #server.listen()
+    print("[STARTING] server is starting...")
     print(f"[LISTENING] Server is listening on {SERVER}")
-    while True:
-        conn, addr = server.accept()
-        thread = threading.Thread(target=handle_client, args=(conn, addr))
-        thread.start()
-        print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
 
+    t1 = threading.Thread(target=receive)
+    t2 = threading.Thread(target=broadcast)
 
-print("[STARTING] server is starting...")
+    t1.start()
+    t2.start()
+
 start()
