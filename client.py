@@ -31,6 +31,61 @@ def receive():
 t = threading.Thread(target=receive)
 t.start()
 
+
+#Checks if there are no error in num of args
+def no_args_amt_err(command, argument):
+    args = argument.split(" ", 1)
+    # print(argument, " : ", args)
+    if command.startswith(MSG_COMMAND):
+        # if len(args) > 2:
+        #     print("[Error] Too many arguments. /msg only accepts 2 arguments: /msg <receiver_alias> <message>\n")
+        #     return 0
+        if len(args) < 2:
+            print("[Error] Too few arguments. /msg accepts 2 arguments: /msg <receiver_alias> <message>\n")
+            return 0
+        elif len(argument) > 90:
+            print("[Error] Message too long. Max characters in a message is 90.\n")
+            return 0
+        elif not len(argument): #no length/empty
+            print("[Error] No message detected. Cannot send an empty string.\n")
+            return 0
+
+
+    if command.startswith(ALL_COMMAND):
+        if len(argument) > 90:
+            print("[Error] Message too long. Max characters in a message is 90.\n")
+            return 0
+        elif not len(argument): #no length/empty
+            print("[Error] No message detected. Cannot send an empty string.\n")
+            return 0
+          
+    if command.startswith(JOIN_COMMAND):
+        if len(args) > 2:
+            print("[Error] Too many arguments. /join only accepts 2 arguments: /join <server_ip> <server_port>\n")
+            return 0
+
+        elif len(args) < 2:
+            print("[Error] Too few arguments. /join accepts 2 arguments: /join <server_ip> <server_port>\n")
+            return 0
+      
+    if command.startswith(REGISTER_COMMAND):
+        if len(argument) > 20: #20 chars max alias length
+            print("[Error] New alias too long. Max alias length is 20 characters.\n")
+            return 0
+        elif not len(argument): #alias is empty string
+            print("[Error] No alias detected. Alias must have at least one character\n")
+            return 0
+        
+      
+    if command.startswith(LEAVE_COMMAND) or command.startswith(HELP_COMMAND):
+        if argument != "":
+            print(f"[Error] Too many arguments. {command} does not accept any argument(s)\n")
+            return 0
+    
+    return 1
+
+
+
 #Sends stuff to server. We code here.
 def command_to_json(command, argument):
     global name
@@ -90,9 +145,9 @@ while connected == False:
         client.sendto(bytes('{ "command": "/join", "owner": "'+ name +'", "server": "'+ SERVER +'", "port": "'+ str(PORT) +'" }', 'utf-8'), ADDR)
         print(f"\"{name}\" has been set as your name. Use the '/register' command to register a new name.")
     elif i==k: # /leave
-        print("Error: Disconnection failed. Please connect to the server first using the '/join <server_ip_add> <port>' command.")
+        print("[Error] Disconnection failed. Please connect to the server first using the '/join <server_ip_add> <port>' command.")
     else:
-        print("Error: Connection to the Message Board Server has failed! Please check Server IP Address and Port Number.")
+        print("[Error] Connection to the Message Board Server has failed! Please check Server IP Address and Port Number.")
 
     while connected == True:
         message = input(f"{name}: ")
@@ -105,20 +160,19 @@ while connected == False:
             argument = input_tokens[1]
         
         if message.startswith(HELP_COMMAND):
-            print("\nThis is a list of commands\n/join - Join the chatroom\n/leave - Leave from the chatroom\n/register [alias] - Register to the chatroom\n/all [message] - Message all users\n/msg [alias] [message] - Message user with certain alias\n/? - Shows list of commands")
+            if no_args_amt_err(command, argument):
+                print("\nThis is a list of commands\n/join - Join the chatroom\n/leave - Leave from the chatroom\n/register [alias] - Register to the chatroom\n/all [message] - Message all users\n/msg [alias] [message] - Message user with certain alias\n/? - Shows list of commands")  
 
         elif message.startswith(JOIN_COMMAND) or message.startswith(ALL_COMMAND) or message.startswith(MSG_COMMAND) or message.startswith(REGISTER_COMMAND):
-            json_message = command_to_json(command, argument) 
-            # print(argument)
-            # print(json_message)
-            client.sendto(json_message, ADDR)
+            if no_args_amt_err(command, argument):
+                json_message = command_to_json(command, argument) 
+                client.sendto(json_message, ADDR)
         
         elif message.startswith(LEAVE_COMMAND):
-            connected, first = False, True
-            json_message = command_to_json(command, argument) 
-            # print(argument)
-            # print(json_message)
-            client.sendto(json_message, ADDR)
+            if no_args_amt_err(command, argument):
+                connected, first = False, True
+                json_message = command_to_json(command, argument) 
+                client.sendto(json_message, ADDR)
 
         else:
             #Error message for unrecognized command

@@ -42,8 +42,13 @@ def join(addr, message):
     
     elif message['server'] == SERVER and message['port'] == str(PORT): #Successfully Connected
         clients[addr] = message['owner']
+
+        #Server Message to all; new client connected
         msg_to_send = f"--- {message['owner']} has joined the server ---".encode()
         all(message, msg_to_send)
+        #Server message to the one who successfully joined
+        msg_to_self = f"--- You have successfully joined the server (server add.: {SERVER})".encode()
+        msg(msg_to_self, addr)
     
     else: # Catch Error
         print('Error: Use /join <server_ip_add> <port>')
