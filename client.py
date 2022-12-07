@@ -173,6 +173,7 @@ while connected == False:
                 connected, first = False, True
                 json_message = command_to_json(command, argument) 
                 client.sendto(json_message, ADDR)
+                print("--- You have disconnected from the server--- ")
 
         else:
             #Error message for unrecognized command
