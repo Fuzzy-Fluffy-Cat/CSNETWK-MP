@@ -51,7 +51,8 @@ def join(addr, message):
         msg(msg_to_self, addr)
     
     else: # Catch Error
-        print('Error: Use /join <server_ip_add> <port>')
+        msg_to_self = "Error: Use /join <server_ip_add> <port>'"
+        msg(msg_to_self, addr)
     
 def all(message, msg_to_send):
     global clients
@@ -95,7 +96,8 @@ def leave(addr, message):
     msg_to_self = "--- You have disconnected from the server--- ".encode()
     all(message, msg_to_all)
     msg(msg_to_self, addr)
-    del clients[addr]
+    clients.remove(addr)
+    # del clients[addr]
 
 def broadcast():
     global clients
@@ -103,14 +105,14 @@ def broadcast():
 
     while True:
         while not messages.empty():
-            print('clients', clients)
+            # print('clients', clients)
             message, addr = messages.get()
 
-            # print('msg:',message) test
-            print('addr',addr)
+            # print('msg:',message)
+            # print('addr',addr)
 
             message = json.loads(message.decode())
-            print('msg:',message)
+            # print('msg:',message)
             print("Command Used: " + message['command'])
             try:
                 if message['command'] == JOIN_COMMAND:
@@ -120,7 +122,7 @@ def broadcast():
                     all(message, msg_to_send)
                 elif message['command'] == MSG_COMMAND:
                     if message['receiver'] in [*clients.values()]:
-                        msg_to_send = f"[To You] {message['owner']}: {message['message']}".encode()
+                        msg_to_send = f"[From {message['owner']}]: {message['message']}".encode()
                         receiver = [a for a, u in clients.items() if u == message['receiver']][0]  #Gets the address corresponding to the alias
                         msg(msg_to_send, receiver)
                         msg_to_self = f"[To {message['receiver']}]: {message['message']}".encode()
