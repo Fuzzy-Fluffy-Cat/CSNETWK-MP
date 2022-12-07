@@ -32,80 +32,79 @@ def receive():
 #COMMAND FUNCTIONS
 def join(addr, message):
     global clients
-    print('msg:',message)
     if addr in clients: #Address already exists in the server
-        msg_to_send = "[Error] You are already connected to the server!".encode()
+        msg_to_send = "Error: You are already connected to the server!".encode()
         msg(msg_to_send, addr)
     
     elif message['owner'] in [*clients.values()]: #Alias already exists in the server
-        msg_to_send = f"[Error] The alias \"{message['owner']}\" already exists. Register a new one".encode()
+        msg_to_send = f"Error: The alias \"{message['owner']}\" already exists. Register a new one".encode()
         msg(msg_to_send, addr)
     
     elif message['server'] == SERVER and message['port'] == str(PORT): #Successfully Connected
-        print('welcome to server')
         clients[addr] = message['owner']
-        msg_to_send = f"---{message['owner']} has joined the server---".encode()
+        msg_to_send = f"--- {message['owner']} has joined the server ---".encode()
         all(message, msg_to_send)
-
-    else: # Wrong server
-        print('error, wrong server')
-        pass
+    
+    else: # Catch Error
+        print('Error: Use /join <server_ip_add> <port>')
     
 def all(message, msg_to_send):
     global clients
   
-    for client_addr, client_name in clients:
-      if client_name != message['owner']: 
-        msg(msg_to_send, client_addr)
+    for client_addr, client_name in clients.items():
+        if client_name != message['owner']: 
+            print("client_addr", client_addr)
+            msg(msg_to_send, client_addr)
+            # msg(msg_to_send, addr) # sender should be able to see that their message is sent
 
 def msg(msg_to_send, receiver):
-      global server
-      server.sendto(msg_to_send, receiver)
+    global server
+    server.sendto(msg_to_send, receiver)
 
 def register(addr, message):
     global clients
     
     #Success Register
     if message['alias'] not in [*clients.values()]:
-      old_name = message['owner']
-      new_name = message['alias']
-      clients[addr] = new_name
-      msg_to_send = f"---\"{old_name}\" has renamed themselves as \"{new_name}\"---".encode()
-      all(message, msg_to_send)
+        old_name = message['owner']
+        new_name = message['alias']
+        clients[addr] = new_name
+        msg_to_send = f"--- \"{old_name}\" has renamed themselves as \"{new_name}\" ---".encode()
+        all(message, msg_to_send)
     
     #Alias already exists
     else:
-      msg_to_send = f"[Error] The alias \"{message['owner']}\" already exists. Register a new one".encode()
-      msg(msg_to_send, addr)
-      
+        msg_to_send = f"Error: The alias \"{message['owner']}\" already exists. Register a new one.".encode()
+        msg(msg_to_send, addr)
 
 def leave(addr, message):
     global clients
     
     #Not connected to the server
-    if addr not in clients:
-        msg_to_send = "[Error] You are not connected to a server".encode()
-        msg(msg_to_send, addr)
-    else:
-        msg_to_all = f"---{message['owner']} has disconnected from the server---".encode()
-        msg_to_self = "---You have disconnected from the server---".encode()
-        all(message, msg_to_all)
-        msg(msg_to_self, addr)
-
+    # if addr not in clients:
+    #     msg_to_send = "Error: You are not connected to a server!".encode()
+    #     msg(msg_to_send, addr)
+    # else:
+    msg_to_all = f"--- {message['owner']} has disconnected from the server--- ".encode()
+    msg_to_self = "--- You have disconnected from the server--- ".encode()
+    all(message, msg_to_all)
+    msg(msg_to_self, addr)
+    del clients[addr]
 
 def broadcast():
     global clients
     msg_to_send = ""
+
     while True:
         while not messages.empty():
-            print('clients: ', clients)
+            print('clients', clients)
             message, addr = messages.get()
 
-            print(message)
-            print(addr)
+            # print('msg:',message)
+            print('addr',addr)
 
             message = json.loads(message.decode())
-            print(message)
+            print('msg:',message)
             print("Command Used: " + message['command'])
             try:
                 if message['command'] == JOIN_COMMAND:
@@ -114,13 +113,17 @@ def broadcast():
                     msg_to_send = f"[To everyone] {message['owner']}: {message['message']}".encode()
                     all(message, msg_to_send)
                 elif message['command'] == MSG_COMMAND:
+                    print('receiver',message['receiver'])
+                    print('type',type(message['receiver']))
                     if message['receiver'] in [*clients.values()]:
                         msg_to_send = f"[To You] {message['owner']}: {message['message']}".encode()
-                        receiver = [a for a, u in clients.items() if u == message['receiver']]  #Gets the address corresponding to the alias
-                        
+                        receiver = [a for a, u in clients.items() if u == message['receiver']][0]  #Gets the address corresponding to the alias
                         msg(msg_to_send, receiver)
+                    elif message['receiver'] == "invalidreceivercode":
+                        msg_to_send = f"Error: Use /msg <receiver> <msg> to send a message.".encode()
+                        msg(msg_to_send, addr)
                     else:
-                        msg_to_send = f"[Error] The receiver \"{message['receiver']}\" does not exist.".encode()
+                        msg_to_send = f"Error: The receiver \"{message['receiver']}\" does not exist.".encode()
                         msg(msg_to_send, addr)
                 elif message['command'] == REGISTER_COMMAND:
                     register(addr, message)
@@ -130,7 +133,6 @@ def broadcast():
                     pass
             except:
                 pass
-            # del clients[addr]
 
 def start():
     print("[STARTING] server is starting...")
