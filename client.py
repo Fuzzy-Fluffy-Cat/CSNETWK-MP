@@ -129,7 +129,7 @@ def command_to_json(command, argument):
 
 name = "user_" + datetime.now(pytz.timezone('Singapore')).strftime("%d%m%Y%H%M%S")
 # print(f"\"{name}\" has been set as your temporary name. Use the /register command to register a new name.")
-# print("Use the /join command to connect to a server.")
+# print("Use the /join command to connect to a server.") test
 print('server '+SERVER)
 
 connected, first = False, True

@@ -106,7 +106,7 @@ def broadcast():
             print('clients', clients)
             message, addr = messages.get()
 
-            # print('msg:',message)
+            # print('msg:',message) test
             print('addr',addr)
 
             message = json.loads(message.decode())
