@@ -11,9 +11,6 @@ ADDR = (SERVER, PORT)
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 client.bind((SERVER, random.randint(8000, 9000)))
 
-#Temporary username/alias
-
-
 #COMMAND LIST
 JOIN_COMMAND = "/join"
 LEAVE_COMMAND = "/leave"
@@ -34,35 +31,6 @@ def receive():
 t = threading.Thread(target=receive)
 t.start()
 
-# #Checks if there are no error in num of args
-# def no_args_amt_error(command, argument):
-#     if command.startswith(MSG_COMMAND):
-        
-#         if len(argument):
-#             return 0
-      
-#     if command.startswith(LEAVE_COMMAND):
-#         if not len(argument):
-#             return 0
-        
-#     if command.startswith(JOIN_COMMAND): 
-#         return ""
-
-#     if command.startswith(REGISTER_COMMAND):
-        
-
-#     if command.startswith(ALL_COMMAND):
-        
-
-    
-        
-
-#     if command.startswith(HELP_COMMAND):
-        
-    
-#     return 1
-
-
 #Sends stuff to server. We code here.
 def command_to_json(command, argument):
     global name
@@ -71,7 +39,9 @@ def command_to_json(command, argument):
         return bytes(str, 'utf-8')
         
     elif command.startswith(JOIN_COMMAND): 
-        str = '{ "command": "/join", "owner": "'+ name +'" }'
+        argument = argument.split(" ", 1)
+        # str = '{ "command": "/join", "owner": "'+ name +'" }'
+        str = '{ "command": "/join", "owner": "'+ name +'", "server": "' + argument[0] + '", "port": "' +  argument[1] + '" }'
         return bytes(str, 'utf-8')
 
     elif command == REGISTER_COMMAND:
@@ -102,13 +72,16 @@ name = "user_" + datetime.now(pytz.timezone('Singapore')).strftime("%d%m%Y%H%M%S
 print("Use the /join command to connect to a server.")
 print('server '+SERVER)
 
-joined = False
-while joined == False:
-    # i = input("")
-    j = "/join " + SERVER + " " + str(PORT)
-    i=j #
-    joined = True if i == j else False
-    print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.") if joined == False else print(f"\"{name}\" has been set as your temporary name. Use the /register command to register a new name.")
+# joined, first = False, True
+# while joined == False:
+#     if first == True:
+#         print("Use the /join command to connect to a server.")
+#     first = False
+#     # i = input("")
+#     j = "/join " + SERVER + " " + str(PORT)
+#     i=j #
+#     joined = True if i == j else False
+#     print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.") if joined == False else print(f"\"{name}\" has been set as your temporary name. Use the /register command to register a new name.")
 
 while True:
     message = input(f"{name}: ")
@@ -125,7 +98,8 @@ while True:
 
     elif message.startswith(JOIN_COMMAND) or message.startswith(ALL_COMMAND) or message.startswith(MSG_COMMAND) or message.startswith(REGISTER_COMMAND) or message.startswith(LEAVE_COMMAND):
         json_message = command_to_json(command, argument) 
-        print(json_message)
+        # print(argument)
+        # print(json_message)
         client.sendto(json_message, ADDR)
     
     else:

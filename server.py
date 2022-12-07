@@ -32,19 +32,24 @@ def receive():
 #COMMAND FUNCTIONS
 def join(addr, message):
     global clients
-    #Address already exists in the server
-    if addr in clients:
-      msg_to_send = "[Error] You are already connected to the server!".encode()
-      msg(msg_to_send, addr)
-    #Alias already exists in the server
-    elif message['owner'] in [*clients.values()]:
-      msg_to_send = f"[Error] The alias \"{message['owner']}\" already exists. Register a new one".encode()
-      msg(msg_to_send, addr)
+    print('msg:',message)
+    if addr in clients: #Address already exists in the server
+        msg_to_send = "[Error] You are already connected to the server!".encode()
+        msg(msg_to_send, addr)
     
-    else: #Successfully Connected
-      clients[addr] = message['owner']
-      msg_to_send = f"---{message['owner']} has joined the server---".encode()
-      all(message, msg_to_send)
+    elif message['owner'] in [*clients.values()]: #Alias already exists in the server
+        msg_to_send = f"[Error] The alias \"{message['owner']}\" already exists. Register a new one".encode()
+        msg(msg_to_send, addr)
+    
+    elif message['server'] == SERVER and message['port'] == str(PORT): #Successfully Connected
+        print('welcome to server')
+        clients[addr] = message['owner']
+        msg_to_send = f"---{message['owner']} has joined the server---".encode()
+        all(message, msg_to_send)
+
+    else: # Wrong server
+        print('error, wrong server')
+        pass
     
 def all(message, msg_to_send):
     global clients
@@ -90,10 +95,10 @@ def leave(addr, message):
 
 def broadcast():
     global clients
-  
     msg_to_send = ""
     while True:
         while not messages.empty():
+            print('clients: ', clients)
             message, addr = messages.get()
 
             print(message)
@@ -124,7 +129,8 @@ def broadcast():
                 else:
                     pass
             except:
-                del clients[addr]
+                pass
+            # del clients[addr]
 
 def start():
     print("[STARTING] server is starting...")
