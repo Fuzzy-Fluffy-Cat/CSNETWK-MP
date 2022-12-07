@@ -123,7 +123,7 @@ def broadcast():
                         msg_to_send = f"[To You] {message['owner']}: {message['message']}".encode()
                         receiver = [a for a, u in clients.items() if u == message['receiver']][0]  #Gets the address corresponding to the alias
                         msg(msg_to_send, receiver)
-                        msg_to_self = f"[To {message['owner']}]: {message['message']}".encode()
+                        msg_to_self = f"[To {message['receiver']}]: {message['message']}".encode()
                         msg(msg_to_self, addr)
                     elif message['receiver'] == "invalidreceivercode":
                         msg_to_send = f"Error: Use /msg <receiver> <msg> to send a message.".encode()
