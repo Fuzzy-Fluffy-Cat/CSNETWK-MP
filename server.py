@@ -47,7 +47,7 @@ def join(addr, message):
         msg_to_send = f"--- {message['owner']} has joined the server ---".encode()
         all(message, msg_to_send)
         #Server message to the one who successfully joined
-        msg_to_self = f"--- You have successfully joined the server (server add.: {SERVER})".encode()
+        msg_to_self = f"--- You have successfully joined the server (Server Add.: {SERVER})".encode()
         msg(msg_to_self, addr)
     
     else: # Catch Error
@@ -58,9 +58,10 @@ def all(message, msg_to_send):
   
     for client_addr, client_name in clients.items():
         if client_name != message['owner']: 
-            print("client_addr", client_addr)
             msg(msg_to_send, client_addr)
-            # msg(msg_to_send, addr) # sender should be able to see that their message is sent
+        else: # To sender
+            msg_to_send = f"[To everyone]: {message['message']}".encode()
+            msg(msg_to_send, client_addr)
 
 def msg(msg_to_send, receiver):
     global server
@@ -118,12 +119,12 @@ def broadcast():
                     msg_to_send = f"[To everyone] {message['owner']}: {message['message']}".encode()
                     all(message, msg_to_send)
                 elif message['command'] == MSG_COMMAND:
-                    print('receiver',message['receiver'])
-                    print('type',type(message['receiver']))
                     if message['receiver'] in [*clients.values()]:
                         msg_to_send = f"[To You] {message['owner']}: {message['message']}".encode()
                         receiver = [a for a, u in clients.items() if u == message['receiver']][0]  #Gets the address corresponding to the alias
                         msg(msg_to_send, receiver)
+                        msg_to_self = f"[To {message['owner']}]: {message['message']}".encode()
+                        msg(msg_to_self, addr)
                     elif message['receiver'] == "invalidreceivercode":
                         msg_to_send = f"Error: Use /msg <receiver> <msg> to send a message.".encode()
                         msg(msg_to_send, addr)

@@ -137,9 +137,9 @@ while connected == False:
     if first == True:
         print("Use the /join command to connect to a server.")
     first = False
-    # i = input("") #comment out if testing
+    i = input("") #comment out if testing
     j, k = "/join " + SERVER + " " + str(PORT), "/leave"
-    i=j # comment out. used for testing without needing to input ip and port
+    # i=j # comment out. used for testing without needing to input ip and port
     if i == j: # Success /join
         connected = True
         client.sendto(bytes('{ "command": "/join", "owner": "'+ name +'", "server": "'+ SERVER +'", "port": "'+ str(PORT) +'" }', 'utf-8'), ADDR)
