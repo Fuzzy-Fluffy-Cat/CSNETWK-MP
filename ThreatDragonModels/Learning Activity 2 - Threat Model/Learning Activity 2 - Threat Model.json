@@ -654,22 +654,7 @@
                 "x": 770,
                 "y": 210
               }
-            ],
-            "tools": {
-              "items": [
-                "boundary",
-                "button-remove",
-                "vertices",
-                "source-arrowhead",
-                "target-arrowhead",
-                "boundary",
-                "button-remove",
-                "vertices",
-                "source-arrowhead",
-                "target-arrowhead"
-              ],
-              "name": null
-            }
+            ]
           },
           {
             "position": {
@@ -934,8 +919,8 @@
           },
           {
             "position": {
-              "x": 470,
-              "y": 200
+              "x": 460,
+              "y": 220
             },
             "size": {
               "width": 50,
@@ -953,6 +938,54 @@
             "data": {
               "type": "tm.Text",
               "name": "Auth\nVerification",
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 580,
+              "y": 210
+            },
+            "size": {
+              "width": 50,
+              "height": 60
+            },
+            "attrs": {
+              "text": {
+                "text": "Verified"
+              }
+            },
+            "visible": true,
+            "shape": "td-text-block",
+            "id": "1abf20fd-7cc6-4d36-a8d8-2a65c9d537c4",
+            "zIndex": 20,
+            "data": {
+              "type": "tm.Text",
+              "name": "Verified",
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 640,
+              "y": -20
+            },
+            "size": {
+              "width": 112.5,
+              "height": 60
+            },
+            "attrs": {
+              "text": {
+                "text": "Verified the User Privilege"
+              }
+            },
+            "visible": true,
+            "shape": "td-text-block",
+            "id": "787f2e8c-8dae-4e53-8877-ee67b03eaeb4",
+            "zIndex": 21,
+            "data": {
+              "type": "tm.Text",
+              "name": "Verified the User Privilege",
               "hasOpenThreats": false
             }
           }
