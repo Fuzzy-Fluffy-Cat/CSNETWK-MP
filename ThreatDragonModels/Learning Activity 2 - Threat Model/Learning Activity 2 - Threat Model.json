@@ -976,7 +976,7 @@
             },
             "attrs": {
               "text": {
-                "text": "Verified the User Privilege"
+                "text": "Verifies the User Privilege"
               }
             },
             "visible": true,
@@ -985,7 +985,7 @@
             "zIndex": 21,
             "data": {
               "type": "tm.Text",
-              "name": "Verified the User Privilege",
+              "name": "Verifies the User Privilege",
               "hasOpenThreats": false
             }
           }
