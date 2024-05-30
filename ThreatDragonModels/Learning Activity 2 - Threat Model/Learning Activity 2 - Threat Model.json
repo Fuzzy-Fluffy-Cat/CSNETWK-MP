@@ -654,7 +654,22 @@
                 "x": 770,
                 "y": 210
               }
-            ]
+            ],
+            "tools": {
+              "items": [
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead",
+                "boundary",
+                "button-remove",
+                "vertices",
+                "source-arrowhead",
+                "target-arrowhead"
+              ],
+              "name": null
+            }
           },
           {
             "position": {
@@ -819,6 +834,126 @@
                   "score": ""
                 }
               ]
+            }
+          },
+          {
+            "position": {
+              "x": 310,
+              "y": 430
+            },
+            "size": {
+              "width": 112.5,
+              "height": 60
+            },
+            "attrs": {
+              "text": {
+                "text": "Feedback Comments Saved\n"
+              }
+            },
+            "visible": true,
+            "shape": "td-text-block",
+            "id": "c407b566-c24a-4e03-b9ea-cda3c54b62ad",
+            "zIndex": 15,
+            "data": {
+              "type": "tm.Text",
+              "name": "Feedback Comments Saved\n",
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 332.5,
+              "y": 380
+            },
+            "size": {
+              "width": 90,
+              "height": 50
+            },
+            "attrs": {
+              "text": {
+                "text": "Insert Feedback\nComments"
+              }
+            },
+            "visible": true,
+            "shape": "td-text-block",
+            "id": "a7613d1b-a5cf-43e9-804c-b7f20de331d7",
+            "zIndex": 16,
+            "data": {
+              "type": "tm.Text",
+              "name": "Insert Feedback\nComments",
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 300,
+              "y": 290
+            },
+            "size": {
+              "width": 112.5,
+              "height": 60
+            },
+            "attrs": {
+              "text": {
+                "text": "User is Authenticated"
+              }
+            },
+            "visible": true,
+            "shape": "td-text-block",
+            "id": "1f4d0470-b271-4fff-9eba-bf8b6d1f23e2",
+            "zIndex": 17,
+            "data": {
+              "type": "tm.Text",
+              "name": "User is Authenticated",
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 250,
+              "y": 230
+            },
+            "size": {
+              "width": 112.5,
+              "height": 60
+            },
+            "attrs": {
+              "text": {
+                "text": "User sends \nUser Credentials"
+              }
+            },
+            "visible": true,
+            "shape": "td-text-block",
+            "id": "95aaffea-e182-4b94-a6ae-81f42ac0fb89",
+            "zIndex": 18,
+            "data": {
+              "type": "tm.Text",
+              "name": "User sends \nUser Credentials",
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 470,
+              "y": 200
+            },
+            "size": {
+              "width": 50,
+              "height": 60
+            },
+            "attrs": {
+              "text": {
+                "text": "Auth\nVerification"
+              }
+            },
+            "visible": true,
+            "shape": "td-text-block",
+            "id": "8a63439c-ef2b-4e8c-8a6a-c2f47196b624",
+            "zIndex": 19,
+            "data": {
+              "type": "tm.Text",
+              "name": "Auth\nVerification",
+              "hasOpenThreats": false
             }
           }
         ],
