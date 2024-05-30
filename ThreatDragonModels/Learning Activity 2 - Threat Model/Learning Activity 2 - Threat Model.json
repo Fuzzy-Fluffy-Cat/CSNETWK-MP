@@ -1,0 +1,27 @@
+{
+  "version": "2.2.0",
+  "summary": {
+    "title": "Learning Activity 2 - Threat Model",
+    "owner": "Christian Castillo",
+    "description": "This threat modelling activity is for educational purposes only",
+    "id": 0
+  },
+  "detail": {
+    "contributors": [],
+    "diagrams": [
+      {
+        "id": 0,
+        "title": "Web-based User Feedback System",
+        "diagramType": "STRIDE",
+        "placeholder": "New STRIDE diagram description",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "version": "2.2.0",
+        "cells": [],
+        "description": "from SAFECode's Tactical Thread Modelling"
+      }
+    ],
+    "diagramTop": 1,
+    "reviewer": "Christian Castillo",
+    "threatTop": 0
+  }
+}
