@@ -1,9 +1,9 @@
 {
   "version": "2.2.0",
   "summary": {
-    "title": "Learning Activity 2 - Threat Model",
+    "title": "Learning Activity 2 - Data Flow Diagram",
     "owner": "Christian Castillo",
-    "description": "This threat modelling activity is for educational purposes only",
+    "description": "This learning activity demonstrates designing a data flow diagram from SAFECode's Tactical Threat Modeling",
     "id": 0
   },
   "detail": {
