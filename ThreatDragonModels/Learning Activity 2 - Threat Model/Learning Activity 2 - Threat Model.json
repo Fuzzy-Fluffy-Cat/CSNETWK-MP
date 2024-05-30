@@ -989,30 +989,6 @@
               "hasOpenThreats": false
             }
           }
-          {
-            "position": {
-              "x": 625,
-              "y": 25
-            },
-            "size": {
-              "width": 80,
-              "height": 80
-            },
-            "attrs": {
-              "text": {
-                "text": "Verified"
-              }
-            },
-            "visible": true,
-            "shape": "td-text-block",
-            "id": "787f2e8c-8dae-4e53-8877-ee67b03eaeb4",
-            "zIndex": 21,
-            "data": {
-              "type": "tm.Text",
-              "name": "Verified",
-              "hasOpenThreats": false
-            }
-          }
         ],
         "description": "from SAFECode's Tactical Threat Modelling"
       }
